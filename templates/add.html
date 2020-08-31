@@ -17,18 +17,18 @@
       <br>
   </form>
   <script>
-    let movie_select=document.getElementById('movie')
+    let movie_select=document.getElementByID('movie')
     let timing_select=document.getElementById('timing')
     movie_select.onchange=function(){
       movie=movie_select.value;
       fetch('/timing/'+movie).then(function(response){
             response.json.then(function(data){
-                let optionHTML='';
+                let optionHTML=''
                 for (let time of data.times){
                   optionHTML+='<option value="'+time.id+'">'+time.timing+'</option>';
                 }
                 timing_select.innerHTML=optionHTML;
-                optionHTML='';
+
                 });
       });
 
