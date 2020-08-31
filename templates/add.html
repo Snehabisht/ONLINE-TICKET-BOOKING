@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+
+  <form method="POST">
+      {# This hidden_tag is a CSRF security feature. #}
+      {{ form.hidden_tag() }}
+      {{ form.name.label }} {{ form.name() }}
+      <br>
+      {{ form.pno.label }} {{ form.pno() }}
+      <br>
+      {{ form.movie.label }} {{ form.movie() }}
+      <br>
+      {{ form.timing.label }} {{ form.timing() }}
+      <br>
+      {{ form.submit() }}
+      <br>
+  </form>
+  <script>
+    let movie_select=document.getElementById('movie')
+    let timing_select=document.getElementById('timing')
+    movie_select.onchange=function(){
+      movie=movie_select.value;
+      fetch('/timing/'+movie).then(function(response){
+            response.json.then(function(data){
+                let optionHTML='';
+                for (let time of data.times){
+                  optionHTML+='<option value="'+time.id+'">'+time.timing+'</option>';
+                }
+                timing_select.innerHTML=optionHTML;
+                optionHTML='';
+                });
+      });
+
+    }
+  </script>
+</div>
+{% endblock %}
