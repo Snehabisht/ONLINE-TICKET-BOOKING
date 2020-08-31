@@ -16,6 +16,10 @@ class AddForm(FlaskForm):
 
 class DelForm(FlaskForm):
 
-    id = IntegerField('Name :')
+    name = IntegerField('Name :')
     pno=IntegerField('Phone Number :')
+    movie=SelectField('Movie Name: ',choices=[('s2','Sadak 2'),('db','Dil Bechara'),('c2','Coolie')])
+
+    # timing=QuerySelectField(Choice.Query,allow_blank=False)
+    
     submit = SubmitField('Confirm Cancellation')

@@ -21,10 +21,7 @@ db = SQLAlchemy(app)
 Migrate(app,db)
 api = Api(app)
 
-# class RssFeed(db.Model):
-#     __tablename__ = 'rssfeeds'
-#     id = db.Column(db.Integer, primary_key=True)
-#     url = db.Column(db.String)
+
 
 class Movies(db.Model):
 
@@ -32,8 +29,7 @@ class Movies(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     movie=db.Column(db.String)
     timing=db.Column(db.String)
-    # feed = RssFeed(url='http://url/for/feed')
-    #session.add(feed)
+
 
     def __init__(self,movie,timing):
         self.movie = movie
@@ -109,20 +105,18 @@ def index():
 def add_pup():
     form = AddForm()
     form.timing.choices = [(timing.id,timing.timing) for timing in Movies.query.filter_by(movie='s2').all()]
-    # if request.method=='POST':
-
-    #     return '<h1>Movies: {form.movie.data},Timing: {form.time.data}</h1>'
+    
     if form.validate_on_submit():
         name = form.name.data
         pno=form.pno.data
         movie=form.movie.data
         timing=form.timing.data
 
-        # Add new Puppy to database
+        # Add new boking to database
         new_pup = UserBooking(name,pno,movie,timing)
         db.session.add(new_pup)
         db.session.commit()
-        return redirect(url_for('list_pup'))
+        return redirect(url_for('index'))
 
     return render_template('add.html',form=form)
 
@@ -138,12 +132,15 @@ def del_pup():
     form = DelForm()
 
     if form.validate_on_submit():
-        id = form.id.data
-        pup = UserBooking.query.get(id)
-        db.session.delete(pup)
+        name = form.name.data
+        pno=form.pno.data
+        movie=form.movie.data
+        
+        delU = UserBooking.query.filter_by(name=name,pno=pno,movie=movie)
+        db.session.delete(delU)
         db.session.commit()
 
-        return redirect(url_for('list_pup'))
+        return redirect(url_for('index'))
     return render_template('delete.html',form=form)
 @app.route('/timing/<movie>')
 def timing(movie):
@@ -163,7 +160,7 @@ class MovieResource(Resource):
         if mov:
             return mov.json()
         else:
-            # If you request a puppy not yet in the puppies list
+            # If you request a movie and timing not in the database
             return {'name':'not found'}, 404
 
     def post(self,name,timing):
@@ -190,10 +187,10 @@ class AllMovies(Resource):
 
     #@jwt_required()
     def get(self):
-        # return all the puppies :)
+        # return all movies
         movies = Movies.query.all()
 
-        # return json of (puppies)
+        # return json of movies
         return [mov.json() for mov in movies]
 
 
